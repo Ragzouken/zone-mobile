@@ -139,7 +139,7 @@ async function start() {
         }
     });
 
-    await client.join({ name: "zone-mobile-test" });
+    await client.join({ name: localStorage.getItem("name") ?? "zone-mobile-test" });
 
     const users = [];
     Array.from(client.zone.users).forEach(([, { userId, name }]) => {
