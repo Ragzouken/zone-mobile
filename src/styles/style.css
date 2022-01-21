@@ -51,22 +51,20 @@ html, body {
     display: flex; flex-direction: column;
 }
 
-body {
-    padding: 1rem;
-}
-
 #chat-log {
     display: flex; flex-direction: column;
-    gap: .5rem;
+    padding: .5rem; gap: .5rem;
 
     /* width: 256px; */
 
     flex: 1;
+
+    overflow: hidden scroll;
 }
 
 #chat-input {
     display: flex; flex-direction: row;
-    gap: .5em;
+    padding: .5em; gap: .5em;
     flex: 0;
 }
 

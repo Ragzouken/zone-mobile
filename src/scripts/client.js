@@ -60,6 +60,47 @@ class ZoneClient extends EventEmitter {
             });
             this.emit('users', {});
         });
+        this.messaging.messages.on('user', (message) => {
+            const user = this.zone.users.get(message.userId) ?? { userId: message.userId, emotes: [], tags: [] };
+            this.zone.users.set(message.userId, user);
+            const local = message.userId === this.credentials?.userId;
+
+            const prev = { ...user };
+            const { userId, ...changes } = message;
+
+            if (local && prev.position && changes.position) delete changes.position;
+
+            Object.assign(user, changes);
+
+            if (!prev.name) {
+                this.emit('join', { user });
+            } else if (prev.name !== user.name) {
+                this.emit('rename', { user, local, previous: prev.name });
+            }
+            
+            if (changes.position !== undefined) this.emit('move', { user, local, position: changes.position });
+            if (changes.emotes) this.emit('emotes', { user, local, emotes: changes.emotes });
+            if (changes.avatar) this.emit('avatar', { user, local, data: changes.avatar });
+            if (changes.tags) this.emit('tags', { user, local, tags: changes.tags });
+        });
+        this.messaging.messages.on('leave', (message) => {
+            const user = this.zone.users.get(message.userId);
+            if (!user) return;
+            this.zone.users.delete(message.userId);
+            this.emit('leave', { user });
+        });
+        this.messaging.messages.on('play', (message) => {
+            // this.zone.lastPlayedItem = message.item;
+            // if (message.item) unqueue(message.item.itemId);
+            this.emit('play', { message });
+        });
+        this.messaging.messages.on('queue', (message) => {
+            // this.zone.queue.push(...message.items);
+            if (message.items.length === 1) this.emit('queue', { item: message.items[0] });
+        });
+        this.messaging.messages.on('unqueue', (message) => {
+            // unqueue(message.itemId);
+        });
     }
 
     async join({ name = "anonymous", avatar = "" } = {}) {
@@ -73,16 +114,18 @@ class ZoneClient extends EventEmitter {
     }
 
     async rename(name) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => reject('timeout'), this.options.quickResponseTimeout);
-            specifically(
-                this.messaging.messages,
-                'user',
-                (message) => message.userId === this.localUserId && message.name === name,
-                resolve,
-            );
-            this.messaging.send('user', { name });
-        });
+        // return new Promise((resolve, reject) => {
+        //     setTimeout(() => reject('timeout'), this.options.quickResponseTimeout);
+        //     specifically(
+        //         this.messaging.messages,
+        //         'user',
+        //         (message) => message.userId === this.localUserId && message.name === name,
+        //         resolve,
+        //     );
+        //     this.messaging.send('user', { name });
+        // });
+
+        this.messaging.send('user', { name });
     }
 
     async chat(text) {
