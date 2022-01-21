@@ -1,2 +1,2 @@
 call build
-neocities upload -d rem target-folder .\dist\index.html
+neocities upload -d zone/chat .\dist\index.html

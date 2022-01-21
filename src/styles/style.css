@@ -32,3 +32,61 @@ canvas, img {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
+
+input[type="text"] {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+:root {
+    background: black; color: white;
+    font-family: monospace;
+    font-size: xxx-large;
+}
+
+html, body {
+    width: 100%; height: 100%;
+    margin: 0; padding: 0;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+}
+
+body {
+    padding: 1rem;
+}
+
+#chat-log {
+    display: flex; flex-direction: column;
+    gap: .5rem;
+
+    /* width: 256px; */
+
+    flex: 1;
+}
+
+#chat-input {
+    display: flex; flex-direction: row;
+    gap: .5em;
+    flex: 0;
+}
+
+#chat-input input {
+    background: black;
+
+    color: white;
+    flex: 1;
+    background: black;
+    border: solid black 3px;
+}
+
+.chat-message {
+
+}
+
+.chat-avatar {
+    margin: 0 .5em;
+    aspect-ratio: 1;
+    height: 1em;
+
+    vertical-align: middle;
+}

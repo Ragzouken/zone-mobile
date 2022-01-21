@@ -5,8 +5,18 @@ html
         meta(charset="utf-8")
         // styles
         style#base-style
-            include styles/base-style.css
+            include styles/style.css
         // scripts
+        script
+            include scripts/utility.js
+        script
+            include scripts/blitsy.js
+        script
+            include scripts/client.js
         script
             include scripts/main.js
     body(onload="start()")
+        #chat-log
+        #chat-input
+            input#chat-text(type="text" placeholder="chat message..." autocomplete="off")
+            button#chat-send send
