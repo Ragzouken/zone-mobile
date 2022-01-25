@@ -28,3 +28,5 @@
   * @returns {HTMLElement[]}
   */
  const ALL = (query, element = undefined) => Array.from((element || document).querySelectorAll(query));
+
+ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

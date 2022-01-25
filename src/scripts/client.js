@@ -48,6 +48,9 @@ class ZoneClient extends EventEmitter {
             const clean = code <= 1001 || code >= 4000;
             this.emit('disconnect', { clean });
         });
+        this.messaging.messages.on('status', (message) => {
+            this.emit('status', { text: message.text });
+        });
         this.messaging.messages.on('chat', (message) => {
             const user = this.zone.users.get(message.userId);
             const local = message.userId === this.credentials.userId;

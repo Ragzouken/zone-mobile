@@ -81,6 +81,13 @@ async function start() {
         logJoin(data.user);
     });
 
+    client.on('disconnect', async ({ clean }) => {
+        if (clean) return;
+        logChat(colorText("*** disconnected ***", "#ff0000"));
+        await sleep(1000);
+        await connect();
+    });
+
     client.on("chat", (data) => {
         logChat(
             ...username(data.user),
@@ -139,17 +146,45 @@ async function start() {
         }
     });
 
-    await client.join({ name: localName, avatar: localAvatar });
+    async function connect() {
+        try {
+            await client.join({ name: localName, avatar: localAvatar });
+        } catch (e) {
+            await sleep(500);
+            return connect();
+        }
+    
+        // reload page after 2 hours of idling
+        detectIdle(2 * 60 * 60 * 1000).then(() => {
+            client.messaging.close();
+            //location.reload();
+        });
 
-    const users = [];
-    Array.from(client.zone.users).forEach(([, user]) => {
-        users.push(...username(user));
-        users.push(colorText(", ", "#ff00ff"));
+        const users = [];
+        Array.from(client.zone.users).forEach(([, user]) => {
+            users.push(...username(user));
+            users.push(colorText(", ", "#ff00ff"));
+        });
+        users.pop();
+
+        logChat(colorText("*** connected ***", "#00ff00"));
+        logChat(colorText(`${client.zone.users.size} users: `, "#ff00ff"), ...users);
+    }
+
+    connect();
+}
+
+async function detectIdle(limit) {
+    return new Promise((resolve, reject) => {
+        let t = 0;
+        window.addEventListener('pointermove', resetTimer);
+        window.addEventListener('keydown', resetTimer);
+
+        function resetTimer() {
+            clearTimeout(t);
+            t = window.setTimeout(resolve, limit);
+        }
     });
-    users.pop();
-
-    logChat(colorText("*** connected ***", "#00ff00"));
-    logChat(colorText(`${client.zone.users.size} users: `, "#ff00ff"), ...users);
 }
 
 function decodeTile(data, color) {
