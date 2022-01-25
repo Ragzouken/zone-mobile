@@ -1,4 +1,7 @@
-let localName = undefined;
+let localName = localStorage.getItem("name") || "zone-mobile-test";
+let localAvatar = 
+    localStorage.getItem(localStorage.getItem('avatar-slot-active') || '') 
+    || localStorage.getItem('avatar');
 
 async function start() {
     const client = new ZoneClient("https://tinybird.zone/");
@@ -6,6 +9,11 @@ async function start() {
     const log = ONE("#chat-log");
     const chatInput = ONE("#chat-text");
     const chatButton = ONE("#chat-send");
+
+    ONE("#chat-input").addEventListener("submit", (event) => {
+        event.preventDefault();
+        sendChat();
+    });
 
     const chatCommands = new Map();
     chatCommands.set("name", rename);
@@ -35,13 +43,7 @@ async function start() {
         chatInput.value = '';
     }
 
-    chatButton.addEventListener("click", () => sendChat());
-
-    window.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            sendChat();
-        }
-    });
+    //chatButton.addEventListener("click", () => sendChat());
 
     function colorText(text, color) {
         return html("span", { style: `color: ${color}` }, text);
@@ -139,17 +141,17 @@ async function start() {
         }
     });
 
-    await client.join({ name: localStorage.getItem("name") ?? "zone-mobile-test" });
+    await client.join({ name: localName, avatar: localAvatar });
 
     const users = [];
-    Array.from(client.zone.users).forEach(([, { userId, name }]) => {
-        users.push(html("span", { style: `color: ${getUserColor(userId)}` }, name));
-        users.push(", ");
+    Array.from(client.zone.users).forEach(([, user]) => {
+        users.push(...username(user));
+        users.push(colorText(", ", "#ff00ff"));
     });
     users.pop();
 
-    log.append(html("div", { class: "chat-message", style: "color: #00ff00" }, "*** connected ***"));
-    log.append(html("div", { class: "chat-message", style: "color: #ff00ff" }, `${client.zone.users.size} users: `, ...users));
+    logChat(colorText("*** connected ***", "#00ff00"));
+    logChat(colorText(`${client.zone.users.size} users: `, "#ff00ff"), ...users);
 }
 
 function decodeTile(data, color) {

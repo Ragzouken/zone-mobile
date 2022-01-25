@@ -17,6 +17,6 @@ html
             include scripts/main.js
     body(onload="start()")
         #chat-log
-        #chat-input
+        form#chat-input
             input#chat-text(type="text" placeholder="chat message..." autocomplete="off")
-            button#chat-send send
+            input(type="submit" value="send")#chat-send
