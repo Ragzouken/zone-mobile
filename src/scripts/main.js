@@ -43,8 +43,6 @@ async function start() {
         chatInput.value = '';
     }
 
-    //chatButton.addEventListener("click", () => sendChat());
-
     function colorText(text, color) {
         return html("span", { style: `color: ${color}` }, text);
     }
