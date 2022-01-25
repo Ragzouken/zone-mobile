@@ -41,7 +41,7 @@ input[type="text"] {
 :root {
     background: black; color: white;
     font-family: monospace;
-    font-size: 3em;
+    font-size: 2vh;
     text-size-adjust: none;
 }
 
